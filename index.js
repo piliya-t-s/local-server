@@ -1,13 +1,11 @@
 import grpc from '@grpc/grpc-js'
 import http from 'http';
 import RoomService from './lib/service/RoomService.js'
-import WsServerFactory from './lib/service/WsServerFactory.js';
 import configureServer from './lib/server/configureServer.js';
 import configureGRPC from './lib/server/configureGRPC.js';
 import 'dotenv/config'
 
-const WSFactory = new WsServerFactory();
-const roomService = new RoomService(WSFactory);
+const roomService = new RoomService();
 const server = http.createServer();
 const grpcServer = new grpc.Server()
 
