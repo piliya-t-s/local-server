@@ -2,11 +2,10 @@ import grpc from '@grpc/grpc-js'
 import path from 'path';
 import http from 'http';
 import RoomService from './lib/service/RoomService.js'
-import conficonfigureServergureAuth from './lib/server/configureServer.js';
-import GRPCService from './lib/service/GRPCService.js';
+import GRPCController from './lib/service/GRPCController.js';
 import 'dotenv/config'
-import configureServer from './lib/server/configureServer.js';
 import WebSocketRoomFactory from './lib/service/WebSocketRoomFactory.js';
+import { parseRoomId  } from './lib/server/parseUrl.js';
 
 const webSocketRoomFactory = new WebSocketRoomFactory()
 const roomService = new RoomService(webSocketRoomFactory)
@@ -14,21 +13,29 @@ const server = http.createServer()
 const grpcServer = new grpc.Server()
 
 
-
-const grpcService = new GRPCService(grpcServer, {
+const gprcController = new GRPCController(grpcServer, roomService, {
     "protoFile": path.join(process.cwd(), "api.proto")
 })
 
-configureServer(server, roomService)
+gprcController.start(process.env.GRPC_PORT)
 
-grpcServer.bindAsync(`localhost:${process.env.GRPC_PORT}`, grpc.ServerCredentials.createInsecure(), () => {
-    grpcServer.start()
+server.on('upgrade', function upgrade(request, socket, head) {
+    let id = parseRoomId(request.url)
+
+    if (id == null) { // url did not match the room template at all
+        socket.destroy();
+        return
+    } 
+    
+    let targetRoom = null;
+    targetRoom = roomService.getRoomById(id)
+    console.log(targetRoom)
+    targetRoom.authUpgrade(request, socket, head)
 })
+
 
 server.listen(80, () => {
   server.once('close', () => {
     console.log('HTTP server closed')
   });
 });
-
-console.log(roomService.createRoom({"id": "1000", isPublic: true}))
