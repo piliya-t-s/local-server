@@ -3,13 +3,17 @@ syntax = "proto3";
 package hostApi;
 
 service Host {
-    rpc createRoom(Room) returns (void);
-    rpc getRoom(void) returns (void);
+    rpc createRoom(Room) returns (Room);
+    rpc deleteRoom()
 }
 
-message void {}
+message voidMsg {}
 
-message Room {
+message roomReq {
+    string UUID = 1;
+}
+
+message room {
     int32 id = 1;
     string str = 2;
 }

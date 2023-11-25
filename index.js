@@ -19,6 +19,7 @@ grpcServer.addService(hostPackage.Host.service, {
 
 function createRoom(call, callback) {
     console.log(call)
+    callback(null, {})
 }
 
 function getRoom(call, callback) {
