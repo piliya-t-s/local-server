@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package hostApi;
+
+service Host {
+    rpc createRoom(Room) returns (void);
+    rpc getRoom(void) returns (void);
+}
+
+message void {}
+
+message Room {
+    int32 id = 1;
+    string str = 2;
+}
