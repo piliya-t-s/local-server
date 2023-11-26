@@ -26,5 +26,3 @@ server.listen(80, () => {
     console.log('HTTP server closed')
   });
 });
-
-roomService.createRoom({"id":"123", "isPublic": true})
