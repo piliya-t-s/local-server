@@ -17,8 +17,6 @@ const gprcController = new GRPCController(grpcServer, roomService, {
     "protoFile": path.join(process.cwd(), "api.proto")
 })
 
-
-
 configureUpgrade(server, roomService)
 configureStream(server, roomService)
 gprcController.start(process.env.GRPC_PORT)
